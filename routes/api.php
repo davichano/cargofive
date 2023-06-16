@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('surcharges')->group(function () {
+    Route::get('/getAll', ['App\Http\Controllers\Api\SurchargesController', 'getAll']);
+    Route::get('/getAllFathers', ['App\Http\Controllers\Api\SurchargesController', 'getAllFathers']);
+    Route::get('/group', ['App\Http\Controllers\Api\SurchargesController', 'group']);
+});
+
