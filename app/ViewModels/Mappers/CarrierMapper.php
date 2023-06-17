@@ -17,8 +17,8 @@ class CarrierMapper
     public static function modelToViewModel(Carrier $model): CarrierViewModel
     {
         $viewModel = new CarrierViewModel();
-        $viewModel->id = $model->id;
-        $viewModel->name = $model->name;
+        $viewModel->id = $model->id ?? 0;
+        $viewModel->name = $model->name ?? "";
         return $viewModel;
     }
 

@@ -29,16 +29,11 @@ class SurchargesController extends Controller
         return response()->json($this->surchargesService->getAllFathers());
     }
 
-    public function group(Request $request): JsonResponse
-    {
-        return response()->json($this->surchargesService->group());
-    }
-
     public function updateExcel(Request $request): JsonResponse
     {
         // Get the Excel file from the request
         $file = $request->file('excel');
-
+        if ($file == null) return response()->json(['answer' => false]);
         // Check the file extension
         $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
         $allowed_extensions = ['xls', 'xlsx'];
@@ -50,5 +45,14 @@ class SurchargesController extends Controller
             'answer' => $this->surchargesService->uploadDataFromExcel($file),
         ];
         return response()->json($data);
+    }
+
+    public function joinGroups(Request $request): JsonResponse
+    {
+        $idGroupA = (int)$request->get('idGroupA');
+        $idGroupB = (int)$request->get('idGroupB');
+        return response()->json([
+            'answer' => $this->surchargesService->joinGroups($idGroupA, $idGroupB)
+        ]);
     }
 }

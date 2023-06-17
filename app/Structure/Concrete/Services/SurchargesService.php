@@ -9,6 +9,7 @@ use App\Structure\Abstract\Repositories\SurchargesRepositoryInterface;
 use App\Structure\Abstract\Services\CarrierServiceInterface;
 use App\Structure\Abstract\Services\RateServiceInterface;
 use App\Structure\Abstract\Services\SurchargesServiceInterface;
+use App\ViewModels\Mappers\RateMapper;
 use App\ViewModels\Mappers\SurchargeMapper;
 use App\ViewModels\RateViewModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -26,6 +27,7 @@ class SurchargesService implements SurchargesServiceInterface
     /**
      * @param SurchargesRepositoryInterface $surchargesRepository
      * @param CarrierServiceInterface $carrierService
+     * @param RateServiceInterface $rateService
      */
     public function __construct(
         SurchargesRepositoryInterface $surchargesRepository,
@@ -51,8 +53,6 @@ class SurchargesService implements SurchargesServiceInterface
 
     public function group(): array
     {
-//        $similarity = StringDistance::jaroWinkler("Overweight", "Ocean Freight");
-//        dd($similarity);
         $list = $this->surchargesRepository->getAllUngrouped();
         //Elloquent Collection to Array
         $data = [];
@@ -149,6 +149,34 @@ class SurchargesService implements SurchargesServiceInterface
                         $this->rateService->save($rate);
                     }
                 }
+            }
+            return true;
+        } catch (\Exception $exception) {
+            //Do something special with the exception, I don't know if Cargofive have any log file or something
+            return false;
+        }
+    }
+
+    public function joinGroups(int $idGroupA, int $idGroupB): bool
+    {
+        try {
+            if ($idGroupB == 0 || $idGroupA == 0) return false;
+            $groupA = $this->surchargesRepository->getById($idGroupA);
+            $groupB = $this->surchargesRepository->getById($idGroupB);
+            if (count($groupB->sons) > count($groupA->sons)) {
+                $temp = $groupA;
+                $groupA = $groupB;
+                $groupB = $temp;
+            }
+            $groupB->idFather = $groupA->id;
+            $this->surchargesRepository->save($groupB);
+            foreach ($groupB->rates as $rate) {
+                $rate->surcharge_id = $groupA->id;
+                $this->rateService->save(RateMapper::modelToViewModel($rate));
+            }
+            foreach ($groupB->sons as $son) {
+                $son->idFather = $groupA->id;
+                $this->surchargesRepository->save($son);
             }
             return true;
         } catch (\Exception $exception) {

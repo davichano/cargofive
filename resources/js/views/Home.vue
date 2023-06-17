@@ -13,14 +13,15 @@
                 <div class="card bg-white">
                     <div class="card-header">
                         Surcharges
-                        <div class="btn btn-primary btn-sm float-end" v-on:click="group">
-                            Group
+                        <div class="btn btn-primary btn-sm float-end" v-on:click="joinGroups">
+                            Join Groups
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="accordion">
                             <div class="accordion-item" v-for="(surcharge, index) in surcharges">
                                 <h2 class="accordion-header">
+                                    <input type="checkbox" v-model="selected" :value="surcharge.id">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             :data-bs-target="'#collapse'+surcharge.id" aria-expanded="false"
                                             aria-controls="collapseOne">
@@ -30,12 +31,29 @@
                                 <div :id="'collapse'+surcharge.id" class="accordion-collapse collapse"
                                      data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        <ul class="list-group">
-                                            <li v-for="son in surcharge.sons" class="list-group-item">{{
-                                                    son.name
-                                                }}
-                                            </li>
-                                        </ul>
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-3">
+                                                <ul class="list-group">
+                                                    <li class="list-group-item active" aria-current="true">
+                                                        Grouped Surcharges
+                                                    </li>
+                                                    <li v-for="son in surcharge.sons" class="list-group-item">
+                                                        {{ son.name }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <ul class="list-group">
+                                                    <li class="list-group-item active" aria-current="true">
+                                                        Freight Rates
+                                                    </li>
+                                                    <li v-for="rate in surcharge.rates" class="list-group-item">
+                                                        {{ rate.amount }} {{ rate.currency }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -54,7 +72,18 @@ export default {
     name: "Home",
     data() {
         return {
-            surcharges: []
+            surcharges: [],
+            selected: []
+        }
+    },
+    watch: {
+        selected: {
+            handler(val) {
+                if (val.length > 2) {
+                    val.shift();
+                }
+            },
+            deep: true
         }
     },
     methods: {
@@ -68,11 +97,6 @@ export default {
                 alert("Error loading the data");
             }
         },
-        group: async function () {
-            let url = urlHome + "/api/surcharges/group"
-            let response = await axios.get(url);
-            this.surcharges = response.data;
-        },
         upload: async function () {
             let url = urlHome + "/api/surcharges/updateExcel"
             let excel = document.getElementById('excel').files[0];
@@ -84,8 +108,23 @@ export default {
             let formData = new FormData();
             formData.append('excel', excel);
             let response = await axios.post(url, formData)
-            if (response.data) this.initList();
-            else alert("Error loading the data");
+            if (response.data) {
+                await this.initList();
+                alert("Loading complete!");
+            } else alert("Error loading the data");
+        },
+        joinGroups: async function () {
+            if (this.selected.length !== 2) {
+                alert("Select 2 groups");
+                return;
+            }
+            let url = urlHome + "/api/surcharges/joinGroups"
+            let response = await axios.post(url, {idGroupA: this.selected[0], idGroupB: this.selected[1]});
+            if (response.data) {
+                this.selected = [];
+                await this.initList();
+                alert("Joined!");
+            } else alert("Error in the groups' joining");
         }
     },
     mounted() {
@@ -95,5 +134,18 @@ export default {
 </script>
 
 <style scoped>
+.accordion-header {
+    position: relative;
+}
 
+.accordion-header input {
+    position: absolute;
+    z-index: 10;
+    top: 40%;
+    left: 10px;
+}
+
+.accordion-header .accordion-button {
+    padding-left: 30px;
+}
 </style>

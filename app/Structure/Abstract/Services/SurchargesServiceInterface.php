@@ -16,4 +16,6 @@ interface SurchargesServiceInterface
      * @throws Exception
      */
     public function uploadDataFromExcel($exel): bool;
+
+    public function joinGroups(int $idGroupA, int $idGroupB): bool;
 }

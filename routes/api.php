@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('surcharges')->group(function () {
     Route::get('/getAll', ['App\Http\Controllers\Api\SurchargesController', 'getAll']);
     Route::get('/getAllFathers', ['App\Http\Controllers\Api\SurchargesController', 'getAllFathers']);
-    Route::get('/group', ['App\Http\Controllers\Api\SurchargesController', 'group']);
     Route::post('/updateExcel', ['App\Http\Controllers\Api\SurchargesController', 'updateExcel']);
+    Route::post('/joinGroups', ['App\Http\Controllers\Api\SurchargesController', 'joinGroups']);
 });
 
