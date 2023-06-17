@@ -1,5 +1,13 @@
 <template>
     <section>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-4 text-center">
+                <h1>Upload Excel File</h1>
+                <hr>
+                <input type="file" name="excel" id="excel">
+                <button class="btn btn-primary m-2" v-on:click="upload">Upload</button>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col">
                 <div class="card bg-white">
@@ -11,12 +19,12 @@
                     </div>
                     <div class="card-body">
                         <div class="accordion">
-                            <div class="accordion-item" v-for="surcharge in surcharges">
+                            <div class="accordion-item" v-for="(surcharge, index) in surcharges">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             :data-bs-target="'#collapse'+surcharge.id" aria-expanded="false"
                                             aria-controls="collapseOne">
-                                        {{ surcharge.name }}
+                                        {{ index + 1 }} - {{ surcharge.name }}
                                     </button>
                                 </h2>
                                 <div :id="'collapse'+surcharge.id" class="accordion-collapse collapse"
@@ -64,6 +72,20 @@ export default {
             let url = urlHome + "/api/surcharges/group"
             let response = await axios.get(url);
             this.surcharges = response.data;
+        },
+        upload: async function () {
+            let url = urlHome + "/api/surcharges/updateExcel"
+            let excel = document.getElementById('excel').files[0];
+            console.log(excel);
+            if (!excel.type.match(/^application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet$/)) {
+                alert('Please select an Excel file.');
+                return;
+            }
+            let formData = new FormData();
+            formData.append('excel', excel);
+            let response = await axios.post(url, formData)
+            if (response.data) this.initList();
+            else alert("Error loading the data");
         }
     },
     mounted() {

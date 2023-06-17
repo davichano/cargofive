@@ -11,14 +11,6 @@ class Rate extends Model
 
     protected $table = 'rates';
 
-    protected $casts = [
-        'apply_to' => 'enum',
-    ];
-
-    protected $enums = [
-        'apply_to' => ['freight', 'destination', 'origin'],
-    ];
-
     protected $fillable = [
         'id',
         'surcharge_id',

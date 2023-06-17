@@ -31,6 +31,7 @@ class SurchargeMapper
         $viewModel->idFather = $model->idFather;
         $viewModel->calculation_type = $model->calculationType != null ? CalculationTypeMapper::modelToViewModel($model->calculationType) : new CalculationTypeViewModel();
         $viewModel->sons = $model->sons != null ? SurchargeMapper::listModelToListViewModel($model->sons) : [];
+        $viewModel->rates = $model->rates != null ? RateMapper::listModelToListViewModel($model->rates) : [];
         return $viewModel;
     }
 
@@ -64,5 +65,16 @@ class SurchargeMapper
         foreach ($list as $item) $data[] = self::modelToViewModel($item);
 
         return $data;
+    }
+
+    public static function excelDataToModel(array $data, Surcharge $model)
+    {
+        $model->id = $data['id'] ?? $model->id;
+        $model->name = $data['surcharge'] ?? "";
+        $model->apply_to = $data['apply_to'] ?? "";
+        $model->calculation_type_id = $data['calculation_type_id'] ?? 1;
+        $model->isGrouped = $data['isGrouped'] ?? true;
+        $model->idFather = $data['idFather'] ?? null;
+        return $model;
     }
 }

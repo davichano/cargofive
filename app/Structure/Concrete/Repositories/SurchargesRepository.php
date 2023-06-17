@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Structure\Repositories;
+namespace App\Structure\Concrete\Repositories;
 
 use App\Models\Surcharge;
+use App\Structure\Abstract\Repositories\SurchargesRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class SurchargesRepository
  *
  * @package App\Structure\Repositories
  */
-class SurchargesRepository
+class SurchargesRepository implements SurchargesRepositoryInterface
 {
     /**
      * Get a surcharge by its ID.
@@ -28,7 +30,7 @@ class SurchargesRepository
      * Get all surcharges.
      *
      */
-    public function getAll()
+    public function getAll(): Collection
     {
         return Surcharge::get();
     }
@@ -37,7 +39,7 @@ class SurchargesRepository
      * Get all surcharges.
      *
      */
-    public function getAllFathers()
+    public function getAllFathers(): Collection
     {
         return Surcharge::where('idFather', null)->get();
     }
@@ -48,14 +50,14 @@ class SurchargesRepository
      * @param Surcharge $surcharge
      * @return Surcharge
      */
-    public function save(Surcharge $surcharge)
+    public function save(Surcharge $surcharge): Surcharge
     {
         if ($surcharge->id > 0) $surcharge->Update();
         else $surcharge->save();
         return $surcharge;
     }
 
-    public function getAllUngrouped()
+    public function getAllUngrouped(): Collection
     {
         return Surcharge::where('isGrouped', false)->get();
     }
