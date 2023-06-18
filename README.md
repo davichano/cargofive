@@ -38,7 +38,11 @@ Run the initial gruoping rutine
 php artisan surcharges:group
 ```
 
-Now the platform is ready!
+Now the platform is ready! You can run the app using
+
+```bash
+php artisan serve
+```
 
 ## Methods
 
