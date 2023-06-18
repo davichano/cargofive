@@ -45,10 +45,11 @@
                                             <div class="col-md-3">
                                                 <ul class="list-group">
                                                     <li class="list-group-item active" aria-current="true">
-                                                        Freight Rates
+                                                        Rates
                                                     </li>
                                                     <li v-for="rate in surcharge.rates" class="list-group-item">
-                                                        {{ rate.amount }} {{ rate.currency }}
+                                                        {{ rate.amount }} {{ rate.currency }} <span
+                                                        class="badge bg-warning float-end text-dark">{{ rate.apply_to }}</span>
                                                     </li>
                                                 </ul>
                                             </div>

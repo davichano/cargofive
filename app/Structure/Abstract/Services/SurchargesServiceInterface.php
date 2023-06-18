@@ -10,7 +10,7 @@ interface SurchargesServiceInterface
 
     public function getAllFathers(): array;
 
-    public function group(): array;
+    public function group(): void;
 
     /**
      * @throws Exception
