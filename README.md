@@ -233,7 +233,7 @@ development life cycle and ensures a cohesive integration between the backend an
 To run the Vue.js app locally, follow these instructions:
 
 1. Open a terminal or command prompt.
-2. Navigate to the root directory of the Vue.js app.
+2. Navigate to the project directory.
 3. Run the following command to install the dependencies:
 
 ```bash
